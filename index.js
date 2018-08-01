@@ -31,7 +31,6 @@ var transfers = [];
 web3.setProvider(new web3.providers.HttpProvider(options.url));
 
 function keep(event) {
-  console.log(event.blockNumber + "/" + event.id);
   return db.put({
     _id: event.blockNumber + "/" + event.id,
     event: event
