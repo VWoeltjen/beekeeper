@@ -67,6 +67,8 @@ db.allDocs({
   return web3.eth.getBlock('latest').then(function (block) {
     return retrieveEvents(start, block.number);
   });
+}).then(function () {
+  console.log("Event database updated.");
 });
 
 // web3.eth.getBlock('latest').then(function (block) {
