@@ -62,7 +62,7 @@ db.allDocs({
   descending: true
 }).then(function (response) {
   return response.rows.length > 0 ? 
-    response.rows[0].doc.event.blockNumber + 1 : 0;
+    response.rows[0].doc.event.blockNumber + 1 : options.epoch;
 }).then(function (start) {
   return web3.eth.getBlock('latest').then(function (block) {
     return retrieveEvents(start, block.number);
