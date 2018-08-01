@@ -22,7 +22,7 @@
             table.appendChild(head);
 
             var body = document.createElement('tbody');
-            fetch(new Request(path + ".json")).then(function (response) {
+            fetch(new Request("/beekeeper" + path + ".json")).then(function (response) {
                 return response.json();
             }).then(function (rows) {
                 rows.forEach(function (row) {
