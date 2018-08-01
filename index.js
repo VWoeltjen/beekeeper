@@ -1,7 +1,7 @@
 var options = {
   url: "http://localhost:8545",
   contract: "0x4d8fc1453a0f359e99c9675954e656d80d996fbf",
-  step: 25000,
+  step: 10000,
   epoch: 5184660
 };
 
@@ -50,6 +50,9 @@ function retrieveEvents(start, end) {
     if (end > toBlock) {
       return retrieveEvents(toBlock + 1, end);
     }
+  }).catch(function (err) {
+    console.log("Failed to retrieve events.");
+    console.log(err);
   });
 }
 
