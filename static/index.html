@@ -33,19 +33,21 @@
                         tr.appendChild(td);
                     });
                     body.appendChild(tr);
-                    tr.onclick = function () {
-                        populateTable("selected", row.url, [
-                            { key: "transactionHash", header: "Transaction Hash"},
-                            { key: "transactionIndex", header: "Transaction Index"},
-                            { key: "blockNumber", header: "Block" },
-                            { key: "from", header: "From" },
-                            { key: "to", header: "To" },
-                            { key: "value", header: "Amount" },
-                            { key: "logIndex", header: "Log Index" },
-                            { key: "removed", header: "Removed" },
-                            { key: "id", header: "ID" }
-                        ]);
-                    };
+                    if (row.url) {
+                        tr.onclick = function () {
+                            populateTable("selected", row.url, [
+                                { key: "transactionHash", header: "Transaction Hash"},
+                                { key: "transactionIndex", header: "Transaction Index"},
+                                { key: "blockNumber", header: "Block" },
+                                { key: "from", header: "From" },
+                                { key: "to", header: "To" },
+                                { key: "value", header: "Amount" },
+                                { key: "logIndex", header: "Log Index" },
+                                { key: "removed", header: "Removed" },
+                                { key: "id", header: "ID" }
+                            ]);
+                        };
+                    }
                 });
             });
             table.appendChild(body);
