@@ -72,12 +72,30 @@ db.allDocs({
   console.log("Event database updated.");
 });
 
-// web3.eth.getBlock('latest').then(function (block) {
-//   var step = options.step;
-//   var end = block.number;
-//   var start = Math.floor((end - 1) / step) * step;
-//   queryEvents(start, end, step);
-// });
-//
-// app.use(express.static('static'));
-// app.listen(8080);
+app.get("/from", function (req, res, next) {
+  console.log("Requesting all addresses from which we see transfers, at /from");
+  db.allDocs({ include_docs: true }).then(function (response) {
+    var addresses = response.rows.map(function (row) {
+      return row.doc.event.returnValues.from;
+    }).sort().reduce(function (array, address) {
+      return array[array.length - 1] === address ? array : array.concat([address]);
+    }, []);
+    res.send(JSON.stringify(addresses));
+  });  
+});
+
+app.get("/to", function (req, res, next) {
+  console.log("Requesting all addresses from which we see transfers, at /from");
+  db.allDocs({ include_docs: true }).then(function (response) {
+    var addresses = response.rows.map(function (row) {
+      return row.doc.event.returnValues.to;
+    }).sort().reduce(function (array, address) {
+      return array[array.length - 1] === address ? array : array.concat([address]);
+    }, []);
+    res.send(JSON.stringify(addresses));    
+  });
+});
+
+app.use(express.static('static'));
+
+app.listen(8080);
