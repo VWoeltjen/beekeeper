@@ -108,7 +108,18 @@ db.allDocs({
       var transfers = response.rows.filter(function (row) {
         return row.doc.event.returnValues[type] === address;
       }).map(function (row) {
-        return row.doc.event;
+        var event = row.doc.event;
+        return {
+          transactionHash: event.transactionHash,
+          transactionIndex: event.transactionIndex,
+          blockNumber: event.blockNumber,
+          from: event.returnValues.from,
+          to: event.returnValues.to,
+          value: event.returnValues.value,
+          logIndex: event.logIndex,
+          removed: event.removed,
+          id: event.id
+        };
       });
       res.send(JSON.stringify(transfers));
     });
