@@ -40,7 +40,6 @@ function keep(event) {
 
 function retrieveEvents(start, end) {
   var step = options.step;
-  console.log(start, end, step);
   return (end - start >= step) ?
     retrieveEvents(start, start + step - 1).then(
       retrieveEvents.bind(null, start + step, end)
@@ -61,7 +60,6 @@ db.allDocs({
   return response.rows.length > 0 ? 
     response.rows[0].doc.event.blockNumber + 1 : 0;
 }).then(function (start) {
-  console.log(start);
   return web3.eth.getBlock('latest').then(function (block) {
     return retrieveEvents(start, block.number);
   });
