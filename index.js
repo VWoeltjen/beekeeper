@@ -72,27 +72,18 @@ db.allDocs({
   console.log("Event database updated.");
 });
 
-app.get("/from", function (req, res, next) {
-  console.log("Requesting all addresses from which we see transfers, at /from");
-  db.allDocs({ include_docs: true }).then(function (response) {
-    var addresses = response.rows.map(function (row) {
-      return row.doc.event.returnValues.from;
-    }).sort().reduce(function (array, address) {
-      return array[array.length - 1] === address ? array : array.concat([address]);
-    }, []);
-    res.send(JSON.stringify(addresses));
-  });  
-});
-
-app.get("/to", function (req, res, next) {
-  console.log("Requesting all addresses from which we see transfers, at /from");
-  db.allDocs({ include_docs: true }).then(function (response) {
-    var addresses = response.rows.map(function (row) {
-      return row.doc.event.returnValues.to;
-    }).sort().reduce(function (array, address) {
-      return array[array.length - 1] === address ? array : array.concat([address]);
-    }, []);
-    res.send(JSON.stringify(addresses));    
+["from", "to"].forEach(function (type) {
+  var path = "/" + type;
+  app.get(path, function (req, res, next) {
+    console.log("Requesting all addresses of the " + type + " field, at " + path);
+    db.allDocs({ include_docs: true }).then(function (response) {
+      var addresses = response.rows.map(function (row) {
+        return row.doc.event.returnValues[type];
+      }).sort().reduce(function (array, address) {
+        return array[array.length - 1] === address ? array : array.concat([address]);
+      }, []);
+      res.send(JSON.stringify(addresses));
+    });
   });
 });
 
