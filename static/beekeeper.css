@@ -28,3 +28,11 @@ th, td {
 body {
   text-align: center;
 }
+
+.transfers {
+  display: inline-block;
+}
+
+h2 {
+  font: 16px sans-serif;
+}
