@@ -131,8 +131,8 @@ db.allDocs({ include_docs: true }).then(function (response) {
   
   response.rows.forEach(function (row) {
     var event = row.doc.event;
-    var from = event.from;
-    var to = event.to;
+    var from = event.returnValues.from;
+    var to = event.returnValues.to;
     var formatted = {
       transactionHash: event.transactionHash,
       transactionIndex: event.transactionIndex,
@@ -146,8 +146,8 @@ db.allDocs({ include_docs: true }).then(function (response) {
     };
     batches.from[from] = batches.from[from] || [];
     batches.to[to] = batches.to[to] || [];
-    batches.from.push(formatted);
-    batches.to.push(formatted);
+    batches.from[from].push(formatted);
+    batches.to[to].push(formatted);
   })
   
   var fs = require('fs');
@@ -155,6 +155,7 @@ db.allDocs({ include_docs: true }).then(function (response) {
   ["from", "to"].forEach(function (type) {
     Object.keys(batches[type]).forEach(function (address) {
       var file = type + "/" + address + ".json";
+      console.log(file);
       fs.writeFileSync(file, JSON.stringify(batches[type][address]));
     });    
   });
