@@ -12,4 +12,8 @@ var token = new web3.eth.Contract(erc20, options.contract);
 
 web3.setProvider(new web3.providers.HttpProvider(options.url));
 
-console.log(token);
+token.methods.totalSupply().call().then(function (result) {
+  console.log(result);
+}).catch(function (error) {
+  console.log(error);
+});
