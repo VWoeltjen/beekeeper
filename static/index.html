@@ -4,7 +4,8 @@
 <body>
     <script>
         var options = {
-            contract: "0x4d8fc1453a0f359e99c9675954e656d80d996fbf"
+            contract: "0x4d8fc1453a0f359e99c9675954e656d80d996fbf",
+            epoch: 5184905
         };
 
         window.addEventListener('load', function() {
@@ -14,17 +15,14 @@
                     token.name(function (err, value) {
                         console.log(value);
                     });
-                    console.log("Starting at " + Date.now());
                     web3.eth.filter({
-                        fromBlock: 0,
+                        fromBlock: options.epoch,
                         toBlock: 'latest',
                         address: options.contract,
                         topics: [web3.sha3('Transfer(address,address,uint256)')]
                     }).get(function (err, events) {
                         console.log(events);
-                        console.log("Finished at " + Date.now());
                     });
-                    console.log(token);
                 });
             });
         });
