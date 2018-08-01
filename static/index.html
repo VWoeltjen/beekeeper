@@ -3,8 +3,19 @@
 </head>
 <body>
     <script>
+        var options = {
+            contract: "0x4d8fc1453a0f359e99c9675954e656d80d996fbf"
+        };
+
         window.addEventListener('load', function() {
-            console.log(web3);            
+            fetch(new Request('bee.json')).then(function (response) {
+                response.json().then(function (abi) {
+                    var token = web3.eth.contract(abi).at(options.contract);
+                    token.name(function (err, value) {
+                        console.log(value);
+                    });
+                });
+            });
         });
     </script>
 </body>
