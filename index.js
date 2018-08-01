@@ -81,7 +81,8 @@ db.allDocs({
         return {
           address: row.doc.event.returnValues[type],
           count: 1,
-          value: row.doc.event.returnValues.value
+          value: row.doc.event.returnValues.value,
+          url: path + "/" + row.doc.event.returnValues[type]
         };
       }).sort(function (a, b) {
         return a.address.localeCompare(b.address);
@@ -99,10 +100,10 @@ db.allDocs({
     });
   });
 
-  path += "/:address";
-  app.get(path, function (req, res, next) {
+  var details = path + "/:address";
+  app.get(details, function (req, res, next) {
     var address = req.params.address;
-    console.log("Requesting transfers " + type + " address " + address + " at " + path);
+    console.log("Requesting transfers " + type + " address " + address + " at " + details);
     db.allDocs({ include_docs: true }).then(function (response) {
       var transfers = response.rows.filter(function (row) {
         return row.doc.event.returnValues[type] === address;
