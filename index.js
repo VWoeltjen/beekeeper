@@ -12,7 +12,10 @@ var token = new web3.eth.Contract(erc20, options.contract);
 
 web3.setProvider(new web3.providers.HttpProvider(options.url));
 
-token.methods.totalSupply().call().then(function (result) {
+web3.eth.call({
+  to: options.contract,
+  data: token.methods.balanceOf(options.contract).encodeABI()
+}).then(function (result) {
   console.log(result);
 }).catch(function (error) {
   console.log(error);
