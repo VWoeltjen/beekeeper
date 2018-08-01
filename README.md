@@ -8,7 +8,7 @@ using flat JSON files, in order to run as a GitHub page.
 
 # Design
 
-The server (`index.js`) manages interactions between:
+The server (`node index.js`) manages interactions between:
 
 * The Ethereum blockchain, via web3 APIs; this is the ground truth of the data displayed.
 * A PouchDB database, used to improve query performance relative to reading from the blockchain.
@@ -16,6 +16,14 @@ The server (`index.js`) manages interactions between:
 
 When started, the server attempts to update its local database to reflect all Transfer 
 events on the Bee Token from the blockchain.
+
+Server configuration is located in this `options` object at the top of `index.js`, or read from 
+a peer file named `options.json`. These options are:
+
+* `url`: The JSON-RPC URL used to read the blockchain; development and testing used [Infura](https://infura.io)
+* `contract`: The address of the ERC-20 token contract to view.
+* `step`: The number of events to query for at a time, when populating the local database.
+* `epoch`: The block number at which to start querying.
 
 On success, it exposes HTTP endpoints for the data needed by the client:
 
