@@ -74,17 +74,35 @@ db.allDocs({
 
 ["from", "to"].forEach(function (type) {
   var path = "/" + type;
+
   app.get(path, function (req, res, next) {
     console.log("Requesting all addresses of the " + type + " field, at " + path);
     db.allDocs({ include_docs: true }).then(function (response) {
       var addresses = response.rows.map(function (row) {
-        return row.doc.event.returnValues[type];
-      }).sort().reduce(function (array, address) {
-        return array[array.length - 1] === address ? array : array.concat([address]);
+        return {
+          address: row.doc.event.returnValues[type],
+          count: 1,
+          value: row.doc.event.returnValues.value
+        };
+      }).sort(function (a, b) {
+        return a.address.localeCompare(b.address);
+      }).reduce(function (array, item) {
+        var last = array[array.length - 1]
+        if (last && last.address === item.address) {
+          last.count += item.count;
+          last.value = web3.utils.toBN(last.value).add(web3.utils.toBN(item.value)).toString(10)
+        } else {
+          array.push(item);
+        }
+        return array;
       }, []);
       res.send(JSON.stringify(addresses));
     });
   });
+
+  // app.get(path + "/:address", function (req, res, next) {
+  //
+  // });
 });
 
 app.use(express.static('static'));
