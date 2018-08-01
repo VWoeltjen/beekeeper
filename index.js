@@ -1,7 +1,7 @@
 var options = {
   url: "http://localhost:8545",
   contract: "0x4d8fc1453a0f359e99c9675954e656d80d996fbf",
-  step: 100000,
+  step: 25000,
   epoch: 5184660
 };
 
@@ -31,6 +31,7 @@ var transfers = [];
 web3.setProvider(new web3.providers.HttpProvider(options.url));
 
 function keep(event) {
+  console.log("Storing event " + event.id + " from block " + event.blockNumber);
   return db.put({
     _id: event.blockNumber + "/" + event.id,
     event: event
@@ -38,17 +39,18 @@ function keep(event) {
 }
 
 function retrieveEvents(start, end) {
-  var step = options.step;
-  return (end - start >= step) ?
-    retrieveEvents(start, start + step - 1).then(
-      retrieveEvents.bind(null, start + step, end)
-    ) :
-    token.getPastEvents("Transfer", { 
-      fromBlock: start, 
-      toBlock: end 
-    }).then(function (events) {
-      return events.map(keep);
-    });
+  var toBlock = Math.min(end, start + options.step - 1);
+  console.log("Retrieving events from block " + start + " to " + toBlock);
+  return token.getPastEvents("Transfer", {
+    fromBlock: start,
+    toBlock: toBlock
+  }).then(function (events) {
+    return events.map(keep);
+  }).then(function () {
+    if (end > toBlock) {
+      return retrieveEvents(toBlock + 1, end);
+    }
+  });
 }
 
 db.allDocs({
@@ -59,7 +61,6 @@ db.allDocs({
   return response.rows.length > 0 ? 
     response.rows[0].doc.event.blockNumber + 1 : 0;
 }).then(function (start) {
-  token.events.Transfer({ fromBlock: start + 1 }).on('data', keep);
   return web3.eth.getBlock('latest').then(function (block) {
     return retrieveEvents(start, block.number);
   });
