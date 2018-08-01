@@ -126,6 +126,40 @@ db.allDocs({
   });
 });
 
-app.use(express.static('static'));
+db.allDocs({ include_docs: true }).then(function (response) {
+  var batches = { from: {}, to: {} };
+  
+  response.rows.forEach(function (row) {
+    var event = row.doc.event;
+    var from = event.from;
+    var to = event.to;
+    var formatted = {
+      transactionHash: event.transactionHash,
+      transactionIndex: event.transactionIndex,
+      blockNumber: event.blockNumber,
+      from: event.returnValues.from,
+      to: event.returnValues.to,
+      value: event.returnValues.value,
+      logIndex: event.logIndex,
+      removed: event.removed,
+      id: event.id
+    };
+    batches.from[from] = batches.from[from] || [];
+    batches.to[to] = batches.to[to] || [];
+    batches.from.push(formatted);
+    batches.to.push(formatted);
+  })
+  
+  var fs = require('fs');
+  
+  ["from", "to"].forEach(function (type) {
+    Object.keys(batches[type]).forEach(function (address) {
+      var file = type + "/" + address + ".json";
+      fs.writeFileSync(file, JSON.stringify(batches[type][address]));
+    });    
+  });
+});
 
-app.listen(8080);
+// app.use(express.static('static'));
+//
+// app.listen(8080);
