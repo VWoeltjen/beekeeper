@@ -20,6 +20,9 @@ var app = express();
 var Web3 = require('web3');
 var web3 = new Web3();
 
+var PouchDB = require('pouchdb');
+var db = new PouchDB('events');
+
 var abi = require('./static/bee.json');
 var token = new web3.eth.Contract(abi, options.contract);
 
@@ -27,31 +30,49 @@ var transfers = [];
 
 web3.setProvider(new web3.providers.HttpProvider(options.url));
 
-token.methods.name().call().then(function (name) {
-  console.log(name);
-});
-
-function queryEvents(start, end, step) {
-  token.getPastEvents("Transfer", { fromBlock: start, toBlock: end }).then(function (events) {
-    console.log(start, end, events.length);
-    transfers = events.concat(transfers);
-    if (start > options.epoch) {
-      start = Math.max(start - step, options.epoch);
-      end = start + step - 1;
-      queryEvents(start, end, step);
-    } else {
-      var fs = require('fs');
-      fs.writeFileSync("events.json", JSON.stringify(events));
-    }
+function keep(event) {
+  console.log(event.blockNumber + "/" + event.id);
+  return db.put({
+    _id: event.blockNumber + "/" + event.id,
+    event: event
   });
 }
 
-web3.eth.getBlock('latest').then(function (block) {
+function retrieveEvents(start, end) {
   var step = options.step;
-  var end = block.number;
-  var start = Math.floor((end - 1) / step) * step;
-  queryEvents(start, end, step);
+  console.log(start, end, step);
+  return (end - start >= step) ?
+    retrieveEvents(start, start + step - 1).then(
+      retrieveEvents.bind(null, start + step, end)
+    ) :
+    token.getPastEvents("Transfer", { 
+      fromBlock: start, 
+      toBlock: end 
+    }).then(function (events) {
+      return events.map(keep);
+    });
+}
+
+db.allDocs({
+  include_docs: true,
+  limit: 1,
+  descending: true
+}).then(function (response) {
+  return response.rows.length > 0 ? 
+    response.rows[0].doc.event.blockNumber + 1 : 0;
+}).then(function (start) {
+  console.log(start);
+  return web3.eth.getBlock('latest').then(function (block) {
+    return retrieveEvents(start, block.number);
+  });
 });
 
-app.use(express.static('static'));
-app.listen(8080);
+// web3.eth.getBlock('latest').then(function (block) {
+//   var step = options.step;
+//   var end = block.number;
+//   var start = Math.floor((end - 1) / step) * step;
+//   queryEvents(start, end, step);
+// });
+//
+// app.use(express.static('static'));
+// app.listen(8080);
