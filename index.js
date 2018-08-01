@@ -23,7 +23,7 @@ var web3 = new Web3();
 var PouchDB = require('pouchdb');
 var db = new PouchDB('events');
 
-var abi = require('./static/bee.json');
+var abi = require('./bee.json');
 var token = new web3.eth.Contract(abi, options.contract);
 
 var transfers = [];
