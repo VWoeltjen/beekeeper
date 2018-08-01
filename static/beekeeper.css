@@ -3,12 +3,10 @@ table {
 }
 
 thead {
-	display: block;
 	overflow: auto;
 }
 
 tbody {
-	display: block;
 	overflow: auto;
 }
 
