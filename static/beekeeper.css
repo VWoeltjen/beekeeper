@@ -1,6 +1,6 @@
 table {
   display: inline-block;
-  height: 90%;
+  height: 40%;
   font: 10px sans-serif;
   table-layout: fixed;
   overflow: auto;
@@ -24,4 +24,8 @@ th, td {
   overflow: hidden;
 	text-align: left;
 	vertical-align: middle;
+}
+
+body {
+  text-align: center;
 }
