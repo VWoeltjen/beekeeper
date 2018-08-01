@@ -1,5 +1,6 @@
 var options = {
-  url: "http://localhost:8545"
+  url: "http://localhost:8545",
+  contract: "0x4d8fc1453a0f359e99c9675954e656d80d996fbf"
 };
 
 var Web3 = require('web3');
