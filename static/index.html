@@ -14,6 +14,17 @@
                     token.name(function (err, value) {
                         console.log(value);
                     });
+                    console.log("Starting at " + Date.now());
+                    web3.eth.filter({
+                        fromBlock: 0,
+                        toBlock: 'latest',
+                        address: options.contract,
+                        topics: [web3.sha3('Transfer(address,address,uint256)')]
+                    }).get(function (err, events) {
+                        console.log(events);
+                        console.log("Finished at " + Date.now());
+                    });
+                    console.log(token);
                 });
             });
         });
