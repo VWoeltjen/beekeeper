@@ -53,9 +53,5 @@ web3.eth.getBlock('latest').then(function (block) {
   queryEvents(start, end, step);
 });
 
-// token.getPastEvents("Transfer", { fromBlock: 5184660, toBlock: 5284660 }).then(function (events) {
-//   console.log(events);
-// });
-
 app.use(express.static('static'));
 app.listen(8080);
