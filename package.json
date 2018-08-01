@@ -7,5 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Vic Woeltjen",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.10",
+    "node": "^10.7.0",
+    "npm": "^6.2.0",
+    "web3": "^1.0.0-beta.35"
+  }
 }
