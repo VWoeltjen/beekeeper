@@ -1,0 +1,19 @@
+table {
+	border-collapse: collapse;
+}
+
+thead {
+	display: block;
+	overflow: auto;
+}
+
+tbody {
+	display: block;
+	overflow: auto;
+}
+
+th, td {
+	padding: .33em 1em;
+	text-align: left;
+	vertical-align: middle;
+}

@@ -1,27 +1,43 @@
 <html>
 <head>
+    <link rel="stylesheet" href="beekeeper.css">
 </head>
 <body>
-    <script>
-        var options = {
-            contract: "0x4d8fc1453a0f359e99c9675954e656d80d996fbf",
-            epoch: 5184660
-        };
+    <table id = "from"></table>
+    <table id = "to"></table>
+    <table id = "selected"></table>
 
-        window.addEventListener('load', function() {
-            fetch(new Request('bee.json')).then(function (response) {
-                response.json().then(function (abi) {
-                    var token = web3.eth.contract(abi).at(options.contract);
-                    token.name(function (err, value) {
-                        console.log(value);
-                    });
-                    web3.eth.filter({
-                        fromBlock: options.epoch,
-                        toBlock: 'latest',
-                        address: options.contract,
-                        topics: [web3.sha3('Transfer(address,address,uint256)')]
-                    }).get(function (err, events) {
-                        console.log(events);
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var columns = [
+                { key: "address", header: "Address" },
+                { key: "count", header: "Transfers" },
+                { key: "value", header: "Total" }
+            ];
+
+            ["from", "to"].forEach(function (type) {
+                var path = "/" + type;
+                var table = document.getElementById(type);
+
+                var head = document.createElement('thead');
+                columns.forEach(function (column) {
+                    var th = document.createElement('th');
+                    th.textContent = column.header;
+                    head.appendChild(th);
+                });
+                table.appendChild(head);
+
+                fetch(new Request(path)).then(function (response) {
+                    return response.json();
+                }).then(function (rows) {
+                    rows.forEach(function (row) {
+                        var tr = document.createElement('tr');
+                        columns.forEach(function (column) {
+                            var td = document.createElement('td');
+                            td.textContent = row[column.key];
+                            tr.appendChild(td);
+                        });
+                        table.appendChild(tr);
                     });
                 });
             });
