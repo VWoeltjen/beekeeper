@@ -74,7 +74,6 @@ db.allDocs({
 
 ["from", "to"].forEach(function (type) {
   var path = "/" + type;
-
   app.get(path, function (req, res, next) {
     console.log("Requesting all addresses of the " + type + " field, at " + path);
     db.allDocs({ include_docs: true }).then(function (response) {
@@ -100,9 +99,19 @@ db.allDocs({
     });
   });
 
-  // app.get(path + "/:address", function (req, res, next) {
-  //
-  // });
+  path += "/:address";
+  app.get(path, function (req, res, next) {
+    var address = req.params.address;
+    console.log("Requesting transfers " + type + " address " + address + " at " + path);
+    db.allDocs({ include_docs: true }).then(function (response) {
+      var transfers = response.rows.filter(function (row) {
+        return row.doc.event.returnValues[type] === address;
+      }).map(function (row) {
+        return row.doc.event;
+      });
+      res.send(JSON.stringify(transfers));
+    });
+  });
 });
 
 app.use(express.static('static'));
