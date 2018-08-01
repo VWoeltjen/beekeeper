@@ -6,6 +6,9 @@ var options = {
 var Web3 = require('web3');
 var web3 = new Web3();
 
+// From https://github.com/ethereum/wiki/wiki/Contract-ERC20-ABI
+var erc20 = require('./erc20.json');
+
 web3.setProvider(new web3.providers.HttpProvider(options.url));
 
 console.log(web3);
